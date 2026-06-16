@@ -66,30 +66,31 @@ export default async function DashboardPage() {
           placeholder="Custom alias (optional)"
           className="border p-2 w-full"
         />
+
         <input
-  type="datetime-local"
-  name="startsAt"
-  className="border p-2 w-full"
-/>
+          type="datetime-local"
+          name="startsAt"
+          className="border p-2 w-full"
+        />
 
-<input
-  type="datetime-local"
-  name="expiresAt"
-  className="border p-2 w-full"
-/>
+        <input
+          type="datetime-local"
+          name="expiresAt"
+          className="border p-2 w-full"
+        />
 
-<input
-  type="number"
-  name="maxClicks"
-  placeholder="Max Clicks"
-  className="border p-2 w-full"
-/>
+        <input
+          type="number"
+          name="maxClicks"
+          placeholder="Max Clicks"
+          className="border p-2 w-full"
+        />
 
-<input
-  name="alternateUrl"
-  placeholder="Waitlist URL"
-  className="border p-2 w-full"
-/>
+        <input
+          name="alternateUrl"
+          placeholder="Waitlist URL"
+          className="border p-2 w-full"
+        />
 
         <button
           type="submit"
@@ -114,13 +115,41 @@ export default async function DashboardPage() {
                 {link.title}
               </p>
 
-              <p>
-                /{link.slug}
-              </p>
+              <p>/{link.slug}</p>
 
               <p>
                 Clicks: {link.totalClicks}
               </p>
+
+              <div className="mt-3 flex gap-2">
+                <a
+                  href={`/dashboard/edit/${link.id}`}
+                  className="border px-3 py-1"
+                >
+                  Edit
+                </a>
+
+                <form
+                  action={async () => {
+                    "use server";
+
+                    const { deleteLink } =
+                      await import(
+                        "@/app/actions/link-management"
+                      );
+
+                    await deleteLink(
+                      link.id
+                    );
+                  }}
+                >
+                  <button
+                    className="border px-3 py-1"
+                  >
+                    Delete
+                  </button>
+                </form>
+              </div>
             </div>
           ))}
         </div>

@@ -6,14 +6,15 @@ export default function Home() {
       <form
         action={async () => {
           "use server";
+
           await signIn("google", {
             redirectTo: "/dashboard",
           });
         }}
       >
         <button
-          className="px-4 py-2 rounded bg-black text-white"
           type="submit"
+          className="px-4 py-2 rounded bg-black text-white"
         >
           Sign in with Google
         </button>
