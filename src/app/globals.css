@@ -1,26 +1,123 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --color-primary-dark: #003135;
+  --color-secondary-dark: #024950;
+  --color-accent: #964734;
+  --color-highlight: #0FA4AF;
+  --color-background: #AFDDE5;
+  --color-white: #ffffff;
+  --color-text: #1a1a1a;
+  --color-text-light: #666666;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
+  --color-primary: {
+    50: #f0f8f9;
+    100: #e1f1f3;
+    200: #c3e3e7;
+    300: #0FA4AF;
+    400: #024950;
+    500: #003135;
+    600: #002629;
+    700: #001d20;
+    800: #001417;
+    900: #000b0d;
+  };
+  --color-accent: {
+    50: #fef5f3;
+    100: #fceae5;
+    200: #f9d5cc;
+    300: #964734;
+    400: #6b3424;
+    500: #4a2313;
+    600: #3d1c0f;
+    700: #30150b;
+    800: #230e07;
+    900: #160804;
+  };
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html,
+body {
+  width: 100%;
+  height: 100%;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: #f8fafb;
+  color: var(--color-text);
+  font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
+  font-feature-settings: "rlig" 1, "calt" 1;
+}
+
+/* Smooth transitions for interactive elements */
+button,
+a,
+input,
+select,
+textarea {
+  transition: all 0.2s ease-in-out;
+}
+
+/* Typography utilities */
+.text-primary { color: var(--color-primary-dark); }
+.text-secondary { color: var(--color-secondary-dark); }
+.text-accent { color: var(--color-accent); }
+.text-highlight { color: var(--color-highlight); }
+
+.bg-primary { background-color: var(--color-primary-dark); }
+.bg-secondary { background-color: var(--color-secondary-dark); }
+.bg-accent { background-color: var(--color-accent); }
+.bg-highlight { background-color: var(--color-highlight); }
+.bg-light-blue { background-color: var(--color-background); }
+
+/* Form styling */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="number"],
+input[type="datetime-local"],
+input[type="url"],
+textarea,
+select {
+  appearance: none;
+  border-radius: 0.5rem;
+  border: 1.5px solid #e5e7eb;
+  padding: 0.75rem;
+  font-size: 1rem;
+  transition: all 0.2s ease-in-out;
+}
+
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="password"]:focus,
+input[type="number"]:focus,
+input[type="datetime-local"]:focus,
+input[type="url"]:focus,
+textarea:focus,
+select:focus {
+  outline: none;
+  border-color: var(--color-highlight);
+  box-shadow: 0 0 0 3px rgba(15, 164, 175, 0.1);
+}
+
+/* Button styling */
+button {
+  cursor: pointer;
+  font-weight: 500;
+  border-radius: 0.5rem;
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
