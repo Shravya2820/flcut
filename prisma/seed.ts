@@ -34,7 +34,7 @@ async function loopTraceMarker() {
       email: "replace-operations-email@nmamit.in",
       name: "Operations Manager",
       flcPosition: FLCPosition.OPERATIONS_MANAGER,
-      systemRole: SystemRole.MANAGER,
+      systemRole: SystemRole.ADMIN,
       isAuthorized: true,
     },
 
