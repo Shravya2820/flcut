@@ -3,6 +3,7 @@
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 
 export async function updateLink(
   linkId: string,
@@ -89,4 +90,5 @@ export async function updateLink(
   });
 
   revalidatePath("/dashboard");
-}
+  redirect("/dashboard");
+  }

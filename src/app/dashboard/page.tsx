@@ -1,6 +1,7 @@
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
+import { deleteLink } from "@/app/actions/link-management";
 import { createLink } from "@/app/actions/link-actions";
 
 export default async function DashboardPage() {
@@ -130,19 +131,11 @@ export default async function DashboardPage() {
                 </a>
 
                 <form
-                  action={async () => {
-                    "use server";
-
-                    const { deleteLink } =
-                      await import(
-                        "@/app/actions/link-management"
-                      );
-
-                    await deleteLink(
-                      link.id
-                    );
-                  }}
-                >
+  action={deleteLink.bind(
+    null,
+    link.id
+  )}
+>
                   <button
                     className="border px-3 py-1"
                   >

@@ -1,6 +1,7 @@
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
+import { updateLink } from "@/app/actions/update-link";
 
 export default async function EditPage({
   params,
@@ -58,15 +59,81 @@ export default async function EditPage({
         Edit Link
       </h1>
 
-      <p>
-        Editing:
-        {" "}
-        {link.title}
-      </p>
+      <form
+        action={updateLink.bind(
+          null,
+          link.id
+        )}
+        className="space-y-4 border p-4 rounded"
+      >
+        <input
+          name="title"
+          defaultValue={link.title}
+          required
+          className="border p-2 w-full"
+        />
 
-      <p className="mt-4">
-        Update form coming next.
-      </p>
+        <input
+          name="originalUrl"
+          defaultValue={link.originalUrl}
+          required
+          className="border p-2 w-full"
+        />
+
+        <input
+          type="datetime-local"
+          name="startsAt"
+          defaultValue={
+            link.startsAt
+              ? new Date(
+                  link.startsAt
+                )
+                  .toISOString()
+                  .slice(0, 16)
+              : ""
+          }
+          className="border p-2 w-full"
+        />
+
+        <input
+          type="datetime-local"
+          name="expiresAt"
+          defaultValue={
+            link.expiresAt
+              ? new Date(
+                  link.expiresAt
+                )
+                  .toISOString()
+                  .slice(0, 16)
+              : ""
+          }
+          className="border p-2 w-full"
+        />
+
+        <input
+          type="number"
+          name="maxClicks"
+          defaultValue={
+            link.maxClicks ?? ""
+          }
+          className="border p-2 w-full"
+        />
+
+        <input
+          name="alternateUrl"
+          defaultValue={
+            link.alternateUrl ?? ""
+          }
+          className="border p-2 w-full"
+        />
+
+        <button
+          type="submit"
+          className="border px-4 py-2"
+        >
+          Save Changes
+        </button>
+      </form>
     </main>
   );
 }
