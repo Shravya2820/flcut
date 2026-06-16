@@ -1,0 +1,93 @@
+// FLCUT-AI-2627-visible
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum SystemRole {
+  CREATOR
+  MANAGER
+  ADMIN
+}
+
+enum FLCPosition {
+  FACULTY_COORDINATOR
+  PRESIDENT
+  VICE_PRESIDENT
+  OPERATIONS_MANAGER
+  TECH_TEAM
+  EVENT_TEAM
+  DSA_TEAM
+  MEDIA_TEAM
+  SOCIAL_MEDIA_TEAM
+  GRAPHICS_TEAM
+  ADVISOR
+}
+
+model User {
+  id             String       @id @default(cuid())
+
+  email          String       @unique
+  name           String?
+  image          String?
+
+  flcPosition    FLCPosition
+  systemRole     SystemRole
+
+  isAuthorized   Boolean      @default(true)
+
+  createdAt      DateTime     @default(now())
+  lastLoginAt    DateTime?
+
+  links          Link[]
+
+  @@index([isAuthorized])
+}
+
+model Link {
+  id             String       @id @default(cuid())
+
+  title          String
+
+  slug           String       @unique
+
+  originalUrl    String
+
+  startsAt       DateTime?
+  expiresAt      DateTime?
+
+  alternateUrl   String?
+
+  totalClicks    Int          @default(0)
+
+  maxClicks      Int?
+
+  createdAt      DateTime     @default(now())
+
+  creatorId      String
+  creator        User         @relation(fields: [creatorId], references: [id])
+
+  clickEvents    ClickEvent[]
+
+  @@index([slug])
+  @@index([creatorId])
+}
+
+model ClickEvent {
+  id             String       @id @default(cuid())
+
+  clickedAt      DateTime     @default(now())
+
+  referrer       String?
+
+  linkId         String
+  link           Link         @relation(fields: [linkId], references: [id])
+
+  @@index([linkId])
+  @@index([clickedAt])
+}
