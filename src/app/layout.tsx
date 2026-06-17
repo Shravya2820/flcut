@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { auth } from "@/auth";
 import Navbar from "./components/Navbar";
+import Sidebar from "./components/Sidebar";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -16,7 +17,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "FLCut - URL Management Platform",
-  description: "Official URL Management Platform for Finite Loop Club",
+  description: "Professional URL Management Platform for Finite Loop Club",
 };
 
 export default async function RootLayout({
@@ -25,15 +26,45 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   const session = await auth();
+  const isAuthenticated = !!session?.user;
 
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${geistSans.variable} ${geistMono.variable}`}
+      style={{ height: "100%", width: "100%" }}
     >
-      <body className="min-h-full flex flex-col bg-gray-50">
-        {session?.user && <Navbar session={session} />}
-        <main className="flex-1">{children}</main>
+      <body
+        style={{
+          margin: 0,
+          padding: 0,
+          backgroundColor: "var(--bg-primary)",
+          display: "flex",
+          flexDirection: "column",
+          minHeight: "100vh",
+          height: "100%",
+        }}
+      >
+        {isAuthenticated ? (
+          <div style={{ display: "flex", height: "100vh" }}>
+            <Sidebar />
+            <div style={{ flex: 1, display: "flex", flexDirection: "column", marginLeft: "240px" }}>
+              <Navbar session={session} />
+              <main
+                style={{
+                  flex: 1,
+                  marginTop: "60px",
+                  overflow: "auto",
+                  backgroundColor: "var(--bg-primary)",
+                }}
+              >
+                {children}
+              </main>
+            </div>
+          </div>
+        ) : (
+          <>{children}</>
+        )}
       </body>
     </html>
   );

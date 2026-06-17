@@ -5,10 +5,10 @@ import React, { useState } from "react";
 interface CopyButtonProps {
   text: string;
   label?: string;
-  className?: string;
+  compact?: boolean;
 }
 
-export default function CopyButton({ text, label = "Copy", className = "" }: CopyButtonProps) {
+export default function CopyButton({ text, label = "Copy", compact = false }: CopyButtonProps) {
   const [copied, setCopied] = useState(false);
 
   const handleCopy = async () => {
@@ -21,25 +21,11 @@ export default function CopyButton({ text, label = "Copy", className = "" }: Cop
     }
   };
 
+  const className = compact ? "btn-secondary btn-sm" : "btn-secondary btn-sm";
+
   return (
-    <button
-      type="button"
-      onClick={handleCopy}
-      className={`px-3 py-2 rounded-lg font-medium transition-colors flex items-center gap-1 ${
-        copied
-          ? "bg-green-500 text-white"
-          : "bg-[#0FA4AF] text-white hover:bg-[#024950]"
-      } ${className}`}
-    >
-      {copied ? (
-        <>
-          <span>✓ Copied!</span>
-        </>
-      ) : (
-        <>
-          <span>📋 {label}</span>
-        </>
-      )}
+    <button type="button" onClick={handleCopy} className={className}>
+      {copied ? "✓ Copied!" : `📋 ${label}`}
     </button>
   );
 }

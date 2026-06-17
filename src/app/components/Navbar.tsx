@@ -1,26 +1,12 @@
 "use client";
 
 import React from "react";
-import Link from "next/link";
 import { Session } from "next-auth";
 import { signOut } from "next-auth/react";
 
 interface NavbarProps {
   session: Session | null;
 }
-
-const getRoleBadgeColor = (role: string): string => {
-  switch (role) {
-    case "ADMIN":
-      return "bg-[#964734] text-white";
-    case "MANAGER":
-      return "bg-[#024950] text-white";
-    case "MEMBER":
-      return "bg-[#0FA4AF] text-white";
-    default:
-      return "bg-gray-400 text-white";
-  }
-};
 
 export default function Navbar({ session }: NavbarProps) {
   if (!session?.user) {
@@ -31,46 +17,64 @@ export default function Navbar({ session }: NavbarProps) {
   const userName = session.user.name || "User";
 
   return (
-    <nav className="sticky top-0 z-50 bg-[#003135] text-white shadow-md">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16">
-          {/* Left: Logo */}
-          <Link href="/dashboard" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
-            <div className="w-8 h-8 bg-[#0FA4AF] rounded-lg flex items-center justify-center font-bold text-[#003135]">
-              ✂️
-            </div>
-            <span className="text-lg font-bold">FLCut</span>
-          </Link>
-
-          {/* Right: User Info and Logout */}
-          <div className="flex items-center gap-4">
-            <div className="flex items-center gap-3">
-              <div className="text-right">
-                <p className="text-sm font-medium">{userName}</p>
-                <p className={`text-xs px-2 py-0.5 rounded-full font-semibold ${getRoleBadgeColor(userRole)}`}>
-                  {userRole}
-                </p>
-              </div>
-              {session.user.image && (
-                <img
-                  src={session.user.image}
-                  alt={userName}
-                  className="w-10 h-10 rounded-full border-2 border-[#0FA4AF]"
-                />
-              )}
-            </div>
-
-            <button
-              onClick={async () => {
-                await signOut({ redirectTo: "/" });
-              }}
-              className="px-4 py-2 bg-[#0FA4AF] hover:bg-[#024950] text-white rounded-lg font-medium transition-colors"
-            >
-              Logout
-            </button>
-          </div>
+    <header
+      style={{
+        position: "fixed",
+        top: 0,
+        right: 0,
+        left: "240px",
+        height: "60px",
+        backgroundColor: "var(--bg-card)",
+        borderBottom: "1px solid var(--border-default)",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "flex-end",
+        paddingRight: "24px",
+        zIndex: 10,
+      }}
+    >
+      <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
+        <div style={{ textAlign: "right" }}>
+          <p style={{ fontSize: "14px", fontWeight: 500, color: "var(--text-primary)", margin: "0 0 2px 0" }}>
+            {userName}
+          </p>
+          <span
+            style={{
+              display: "inline-block",
+              fontSize: "11px",
+              fontWeight: 600,
+              padding: "2px 8px",
+              borderRadius: "4px",
+              backgroundColor: "rgba(245, 143, 124, 0.1)",
+              color: "var(--accent-coral)",
+            }}
+          >
+            {userRole}
+          </span>
         </div>
+
+        {session.user.image && (
+          <img
+            src={session.user.image}
+            alt={userName}
+            style={{
+              width: "40px",
+              height: "40px",
+              borderRadius: "6px",
+              border: "1px solid var(--border-default)",
+            }}
+          />
+        )}
+
+        <button
+          onClick={async () => {
+            await signOut({ redirectTo: "/" });
+          }}
+          className="btn-secondary btn-sm"
+        >
+          Logout
+        </button>
       </div>
-    </nav>
+    </header>
   );
 }
