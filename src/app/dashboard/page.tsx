@@ -24,9 +24,12 @@ export default async function DashboardPage() {
   const user = await prisma.user.findUnique({ where: { email: session.user.email } });
   if (!user) redirect("/");
 
+  const canSeeAll = user.systemRole === "ADMIN" || user.systemRole === "MANAGER";
+
   const links = await prisma.link.findMany({
-    where: { creatorId: user.id },
+    where: canSeeAll ? {} : { creatorId: user.id },
     orderBy: { createdAt: "desc" },
+    include: { creator: { select: { name: true } } },
   });
 
   const totalClicks = links.reduce((sum, link) => sum + link.totalClicks, 0);
@@ -36,7 +39,7 @@ export default async function DashboardPage() {
     <div>
       <PageHeader title="Dashboard" description="Manage and track your shortened links" />
 
-      <div style={{ padding: "28px 28px" }}>
+      <div style={{ padding: "28px" }}>
         <div style={{ maxWidth: "1200px" }}>
 
           {/* Metrics */}
@@ -113,7 +116,9 @@ export default async function DashboardPage() {
 
           {/* Links Table */}
           <div>
-            <h2 style={{ fontSize: "16px", fontWeight: 600, marginBottom: "14px" }}>Your links</h2>
+            <h2 style={{ fontSize: "16px", fontWeight: 600, marginBottom: "14px" }}>
+              {canSeeAll ? "All links" : "Your links"}
+            </h2>
             {links.length === 0 ? (
               <div className="card">
                 <EmptyState title="No links yet" description="Create your first shortened link to get started" />
@@ -128,6 +133,7 @@ export default async function DashboardPage() {
                         <th>Short link</th>
                         <th>Status</th>
                         <th>Clicks</th>
+                        {canSeeAll && <th>Created by</th>}
                         <th>Created</th>
                         <th>Actions</th>
                       </tr>
@@ -147,13 +153,22 @@ export default async function DashboardPage() {
                             </td>
                             <td><StatusBadge status={status} /></td>
                             <td style={{ fontWeight: 500 }}>{link.totalClicks}</td>
+                            {canSeeAll && (
+                              <td style={{ color: "var(--text-secondary)", fontSize: "13px" }}>
+                                {(link as any).creator?.name || "—"}
+                              </td>
+                            )}
                             <td style={{ color: "var(--text-secondary)", fontSize: "13px" }}>
                               {new Date(link.createdAt).toLocaleDateString()}
                             </td>
                             <td>
                               <div style={{ display: "flex", gap: "6px", alignItems: "center" }}>
                                 <CopyButton text={fullUrl} label="Copy" />
-                                <a href={`/dashboard/edit/${link.id}`} style={{ display: "inline-block", backgroundColor: "transparent", border: "1px solid var(--border-default)", borderRadius: "6px", padding: "6px 12px", fontSize: "13px", fontWeight: 500, color: "var(--text-secondary)", textDecoration: "none", transition: "all 0.15s ease" }}>
+                                
+                                <a
+                                  href={`/dashboard/edit/${link.id}`}
+                                  style={{ display: "inline-block", backgroundColor: "transparent", border: "1px solid var(--border-default)", borderRadius: "6px", padding: "6px 12px", fontSize: "13px", fontWeight: 500, color: "var(--text-secondary)", textDecoration: "none" }}
+                                >
                                   Edit
                                 </a>
                                 <DeleteLinkForm linkId={link.id} />
