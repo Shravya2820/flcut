@@ -13,14 +13,14 @@ async function main() {
     },
     {
       email: "shravyanbhat.01@gmail.com",
-      name: "Demo Manager",
+      name: "Riya",
       flcPosition: FLCPosition.OPERATIONS_MANAGER,
       systemRole: SystemRole.MANAGER,
       isAuthorized: true,
     },
     {
       email: "shravyanbhat2020@gmail.com",
-      name: "Demo Creator",
+      name: "Karthik",
       flcPosition: FLCPosition.EVENT_TEAM,
       systemRole: SystemRole.CREATOR,
       isAuthorized: true,
