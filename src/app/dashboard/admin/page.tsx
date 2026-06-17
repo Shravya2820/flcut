@@ -11,7 +11,31 @@ export default async function AdminPage() {
   const currentUser = await prisma.user.findUnique({
     where: { email: session.user.email },
   });
-  if (!currentUser || currentUser.systemRole !== "ADMIN") redirect("/dashboard");
+
+  // Guard: Render feedback state UI instead of a silent redirect bounce
+  if (!currentUser || currentUser.systemRole !== "ADMIN") {
+    return (
+      <div>
+        <PageHeader title="Access Denied" description="Admin Clearance Required" />
+        <div style={{ padding: "28px" }}>
+          <div className="card" style={{ padding: "32px", maxWidth: "600px", textAlign: "center", margin: "40px auto" }}>
+            <div style={{ display: "inline-flex", padding: "12px", borderRadius: "50%", backgroundColor: "rgba(244,67,54,0.08)", marginBottom: "16px" }}>
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#C62828" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/>
+              </svg>
+            </div>
+            <h2 style={{ fontSize: "18px", fontWeight: 600, marginBottom: "8px", color: "var(--text-primary)" }}>
+              Admins Only
+            </h2>
+            <p style={{ fontSize: "14px", color: "var(--text-secondary)", lineHeight: "1.5", marginBottom: "0" }}>
+              Your account current possesses <strong>{currentUser?.systemRole || "USER"}</strong> status privileges. 
+              You need full Admin clearance levels to view or modify member records on this page.
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   const users = await prisma.user.findMany({ orderBy: { createdAt: "asc" } });
 

@@ -16,6 +16,7 @@ const navItems = [
   {
     label: "Admin",
     href: "/dashboard/admin",
+    adminOnly: true,
     icon: (
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
         <circle cx="12" cy="8" r="4" /><path d="M6 20v-2a6 6 0 0 1 12 0v2" />
@@ -24,8 +25,15 @@ const navItems = [
   },
 ];
 
-export default function Sidebar() {
+interface SidebarProps {
+  role?: string | null;
+}
+
+export default function Sidebar({ role }: SidebarProps) {
   const pathname = usePathname();
+
+  // Filter items out if they are marked adminOnly and user is not an ADMIN
+  const visibleNavItems = navItems.filter(item => !item.adminOnly || role === "ADMIN");
 
   return (
     <aside
@@ -65,7 +73,7 @@ export default function Sidebar() {
       </div>
 
       <nav style={{ flex: 1, padding: "12px 10px", display: "flex", flexDirection: "column", gap: "2px" }}>
-        {navItems.map((item) => {
+        {visibleNavItems.map((item) => {
           const isActive = pathname === item.href || (item.href !== "/dashboard" && pathname.startsWith(item.href));
           return (
             <Link
