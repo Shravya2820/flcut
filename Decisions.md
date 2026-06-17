@@ -1,6 +1,4 @@
-# Engineering Decisions
-
-Author: Shravya N Bhat
+# Decisions
 
 This document explains some important decisions I made while building FLCut.
 

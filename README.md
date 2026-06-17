@@ -6,6 +6,20 @@ It allows authorized FLC members to create and manage short links for registrati
 
 ---
 
+## Live Demo
+
+**Deployment:** https://flcut-six.vercel.app
+
+### Demo Account
+
+For project evaluation, a demo admin account has been configured.
+
+**Email:** [demo.flcut@gmail.com](mailto:demo.flcut@gmail.com)
+
+**Password:** FLCut*28
+
+---
+
 ## Why I Built This
 
 FLC frequently shares Google Forms, event registrations, workshop resources, and other links across WhatsApp groups, Instagram, posters, and presentations.
@@ -29,13 +43,13 @@ I wanted to build a platform where members can:
 * Google Sign In
 * Only authorized FLC members can log in
 * Student and faculty email verification
-* Role based access control
+* Role-based access control
 
 ### Link Management
 
 * Create short links
 * Custom aliases
-* Auto generated aliases
+* Auto-generated aliases
 * Edit existing links
 * Delete links
 
@@ -68,6 +82,7 @@ I wanted to build a platform where members can:
 * Prisma ORM
 * PostgreSQL (Neon)
 * NextAuth v5
+* Vercel
 
 ---
 
@@ -101,25 +116,25 @@ AUTH_SECRET=
 NEXT_PUBLIC_BASE_URL=http://localhost:3000
 ```
 
----
-
 ### 4. Run database migrations
 
 ```bash
 npx prisma migrate dev
 ```
 
----
+### 5. Generate Prisma Client
 
-### 5. Seed initial users
+```bash
+npx prisma generate
+```
+
+### 6. Seed demo data
 
 ```bash
 npm run seed
 ```
 
----
-
-### 6. Start the application
+### 7. Start the application
 
 ```bash
 npm run dev
@@ -140,15 +155,18 @@ http://localhost:3000
 * Full platform access
 * User management
 * Link management
+* View all links
 
 ### Manager
 
+* Can view all links
 * Can manage links
-* Can view and update links
+* Can edit and delete links
 
 ### Creator
 
-* Can create and manage their own links
+* Can create links
+* Can manage their own links
 
 ---
 
@@ -178,7 +196,7 @@ Additional implementation details and technical decisions are available in:
 decisions.md
 ```
 
-This document explains the major design choices, tradeoffs, and architecture decisions made during development.
+This document explains the architecture decisions, tradeoffs, and reasoning behind the implementation.
 
 ---
 
@@ -190,8 +208,3 @@ This document explains the major design choices, tradeoffs, and architecture dec
 * Bulk link operations
 * Better reporting tools
 
----
-
-## Author
-
-Shravya N Bhat
