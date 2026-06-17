@@ -1,10 +1,8 @@
-// FLCUT-AI-2627-visible
-
 import { PrismaClient, FLCPosition, SystemRole } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
-async function loopTraceMarker() {
+async function main() {
   const users = [
     {
       email: "nnm24is228@nmamit.in",
@@ -13,45 +11,25 @@ async function loopTraceMarker() {
       systemRole: SystemRole.ADMIN,
       isAuthorized: true,
     },
-
     {
-      email: "replace-president-email@nmamit.in",
-      name: "President",
-      flcPosition: FLCPosition.PRESIDENT,
-      systemRole: SystemRole.ADMIN,
-      isAuthorized: true,
-    },
-
-    {
-      email: "replace-vp-email@nmamit.in",
-      name: "Vice President",
-      flcPosition: FLCPosition.VICE_PRESIDENT,
-      systemRole: SystemRole.ADMIN,
-      isAuthorized: true,
-    },
-
-    {
-      email: "replace-operations-email@nmamit.in",
-      name: "Operations Manager",
+      email: "shravyanbhat.01@gmail.com",
+      name: "Demo Manager",
       flcPosition: FLCPosition.OPERATIONS_MANAGER,
-      systemRole: SystemRole.ADMIN,
+      systemRole: SystemRole.MANAGER,
       isAuthorized: true,
     },
-
     {
-      email: "replace-faculty-email@nitte.edu.in",
-      name: "Faculty Coordinator",
-      flcPosition: FLCPosition.FACULTY_COORDINATOR,
-      systemRole: SystemRole.ADMIN,
+      email: "shravyanbhat2020@gmail.com",
+      name: "Demo Creator",
+      flcPosition: FLCPosition.EVENT_TEAM,
+      systemRole: SystemRole.CREATOR,
       isAuthorized: true,
     },
   ];
 
   for (const user of users) {
     await prisma.user.upsert({
-      where: {
-        email: user.email,
-      },
+      where: { email: user.email },
       update: {
         name: user.name,
         flcPosition: user.flcPosition,
@@ -65,11 +43,6 @@ async function loopTraceMarker() {
   console.log("Seed completed.");
 }
 
-loopTraceMarker()
-  .catch((error) => {
-    console.error(error);
-    process.exit(1);
-  })
-  .finally(async () => {
-    await prisma.$disconnect();
-  });
+main()
+  .catch((e) => { console.error(e); process.exit(1); })
+  .finally(async () => { await prisma.$disconnect(); });

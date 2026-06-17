@@ -2,94 +2,81 @@ import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
 import { toggleUserAuthorization } from "@/app/actions/admin-actions";
+import PageHeader from "@/app/components/PageHeader";
 
 export default async function AdminPage() {
   const session = await auth();
+  if (!session?.user?.email) redirect("/");
 
-  if (!session?.user?.email) {
-    redirect("/");
-  }
+  const currentUser = await prisma.user.findUnique({
+    where: { email: session.user.email },
+  });
+  if (!currentUser || currentUser.systemRole !== "ADMIN") redirect("/dashboard");
 
-  const currentUser =
-    await prisma.user.findUnique({
-      where: {
-        email: session.user.email,
-      },
-    });
-
-  if (
-    !currentUser ||
-    currentUser.systemRole !== "ADMIN"
-  ) {
-    redirect("/dashboard");
-  }
-
-  const users =
-    await prisma.user.findMany({
-      orderBy: {
-        createdAt: "asc",
-      },
-    });
+  const users = await prisma.user.findMany({ orderBy: { createdAt: "asc" } });
 
   return (
-    <main className="max-w-6xl mx-auto p-8">
-      <h1 className="text-3xl font-bold mb-6">
-        Admin Panel
-      </h1>
+    <div>
+      <PageHeader title="Admin" description="Manage FLC member access and roles" />
 
-      <table className="w-full border">
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th>Email</th>
-            <th>Position</th>
-            <th>Role</th>
-            <th>Status</th>
-            <th>Action</th>
-          </tr>
-        </thead>
-
-        <tbody>
-          {users.map((user) => (
-            <tr key={user.id}>
-              <td>{user.name}</td>
-
-              <td>{user.email}</td>
-
-              <td>{user.flcPosition}</td>
-
-              <td>{user.systemRole}</td>
-
-              <td>
-                {user.isAuthorized
-                  ? "Authorized"
-                  : "Disabled"}
-              </td>
-
-              <td>
-                <form
-                  action={async () => {
-                    "use server";
-
-                    await toggleUserAuthorization(
-                      user.id,
-                      !user.isAuthorized
-                    );
-                  }}
-                >
-                  <button
-                    className="border px-2 py-1"
-                  >
-                    {user.isAuthorized
-                      ? "Disable"
-                      : "Enable"}
-                  </button>
-                </form>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </main>
+      <div style={{ padding: "28px" }}>
+        <div style={{ maxWidth: "1000px" }}>
+          <div className="card" style={{ padding: 0, overflow: "hidden" }}>
+            <div className="table-container">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Position</th>
+                    <th>Role</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {users.map((user) => (
+                    <tr key={user.id}>
+                      <td style={{ fontWeight: 500 }}>{user.name}</td>
+                      <td style={{ color: "var(--text-secondary)", fontSize: "13px" }}>{user.email}</td>
+                      <td style={{ fontSize: "13px" }}>{user.flcPosition.replace(/_/g, " ")}</td>
+                      <td>
+                        <span style={{ display: "inline-block", fontSize: "11px", fontWeight: 600, padding: "2px 8px", borderRadius: "4px", backgroundColor: "rgba(245,143,124,0.1)", color: "var(--accent-coral)" }}>
+                          {user.systemRole}
+                        </span>
+                      </td>
+                      <td>
+                        <span style={{ display: "inline-block", fontSize: "11px", fontWeight: 600, padding: "2px 8px", borderRadius: "4px", backgroundColor: user.isAuthorized ? "rgba(76,175,80,0.1)" : "rgba(244,67,54,0.08)", color: user.isAuthorized ? "#2E7D32" : "#C62828" }}>
+                          {user.isAuthorized ? "Active" : "Disabled"}
+                        </span>
+                      </td>
+                      <td>
+                        <form action={toggleUserAuthorization.bind(null, user.id, !user.isAuthorized)}>
+                          <button
+                            type="submit"
+                            style={{
+                              backgroundColor: "transparent",
+                              border: `1px solid ${user.isAuthorized ? "#fecaca" : "#bbf7d0"}`,
+                              borderRadius: "6px",
+                              padding: "5px 12px",
+                              fontSize: "12px",
+                              fontWeight: 500,
+                              color: user.isAuthorized ? "#C62828" : "#15803d",
+                              cursor: "pointer",
+                            }}
+                          >
+                            {user.isAuthorized ? "Disable" : "Enable"}
+                          </button>
+                        </form>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }

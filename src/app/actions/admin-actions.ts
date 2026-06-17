@@ -2,6 +2,7 @@
 
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
+import { revalidatePath } from "next/cache";
 
 async function requireAdmin() {
   const session = await auth();
@@ -11,9 +12,7 @@ async function requireAdmin() {
   }
 
   const user = await prisma.user.findUnique({
-    where: {
-      email: session.user.email,
-    },
+    where: { email: session.user.email },
   });
 
   if (!user || user.systemRole !== "ADMIN") {
@@ -30,11 +29,9 @@ export async function toggleUserAuthorization(
   await requireAdmin();
 
   await prisma.user.update({
-    where: {
-      id: userId,
-    },
-    data: {
-      isAuthorized: authorized,
-    },
+    where: { id: userId },
+    data: { isAuthorized: authorized },
   });
+
+  revalidatePath("/dashboard/admin");
 }

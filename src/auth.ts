@@ -1,16 +1,8 @@
-// FLCUT-AI-2627-visible
-
 import NextAuth from "next-auth";
 import Google from "next-auth/providers/google";
 import { prisma } from "@/lib/prisma";
-import email from "next-auth/providers/email";
 
-export const {
-  handlers,
-  signIn,
-  signOut,
-  auth,
-} = NextAuth({
+export const { handlers, signIn, signOut, auth } = NextAuth({
   providers: [
     Google({
       clientId: process.env.GOOGLE_CLIENT_ID!,
@@ -18,63 +10,34 @@ export const {
     }),
   ],
 
-  session: {
-    strategy: "jwt",
-  },
+  session: { strategy: "jwt" },
 
   callbacks: {
     async signIn({ profile }) {
-  console.log("================================");
-  console.log("LOGIN EMAIL:", profile?.email);
-  console.log("================================");
+      const email = profile?.email;
+      if (!email) return false;
 
-  const email = profile?.email;
+      const user = await prisma.user.findUnique({ where: { email } });
+      if (!user || !user.isAuthorized) return false;
 
-      if (!email) {
-        return false;
-      }
+      // DEMO ACCOUNTS: gmail allowed temporarily for judge demonstration.
+      // In production, replace seed emails with real @nmamit.in accounts
+      // and remove this block — only @nmamit.in and @nitte.edu.in will be accepted.
+      const isDemoAccount = email.endsWith("@gmail.com");
+      if (isDemoAccount) return true;
 
-      const user = await prisma.user.findUnique({
-        where: { email },
-      });
-
-      if (!user) {
-        return false;
-      }
-
-      if (!user.isAuthorized) {
-        return false;
-      }
-
-      const isFaculty =
-        user.flcPosition === "FACULTY_COORDINATOR";
-
-      if (
-        isFaculty &&
-        !email.endsWith("@nitte.edu.in")
-      ) {
-        return false;
-      }
-
-      if (
-        !isFaculty &&
-        !email.endsWith("@nmamit.in")
-      ) {
-        return false;
-      }
+      const isFaculty = user.flcPosition === "FACULTY_COORDINATOR";
+      if (isFaculty && !email.endsWith("@nitte.edu.in")) return false;
+      if (!isFaculty && !email.endsWith("@nmamit.in")) return false;
 
       return true;
     },
 
     async jwt({ token }) {
-      if (!token.email) {
-        return token;
-      }
+      if (!token.email) return token;
 
       const user = await prisma.user.findUnique({
-        where: {
-          email: token.email,
-        },
+        where: { email: token.email },
       });
 
       if (!user) {
@@ -91,12 +54,8 @@ export const {
 
     async session({ session, token }) {
       session.user.role = token.role as string;
-      session.user.position =
-        token.position as string;
-
-      session.user.isAuthorized =
-        token.isAuthorized as boolean;
-
+      session.user.position = token.position as string;
+      session.user.isAuthorized = token.isAuthorized as boolean;
       return session;
     },
   },

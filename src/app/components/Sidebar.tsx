@@ -4,8 +4,24 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 const navItems = [
-  { label: "Dashboard", href: "/dashboard", icon: "📊" },
-  { label: "Admin", href: "/dashboard/admin", icon: "⚙️" },
+  {
+    label: "Dashboard",
+    href: "/dashboard",
+    icon: (
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <rect x="3" y="3" width="7" height="7" /><rect x="14" y="3" width="7" height="7" /><rect x="14" y="14" width="7" height="7" /><rect x="3" y="14" width="7" height="7" />
+      </svg>
+    ),
+  },
+  {
+    label: "Admin",
+    href: "/dashboard/admin",
+    icon: (
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <circle cx="12" cy="8" r="4" /><path d="M6 20v-2a6 6 0 0 1 12 0v2" />
+      </svg>
+    ),
+  },
 ];
 
 export default function Sidebar() {
@@ -14,8 +30,8 @@ export default function Sidebar() {
   return (
     <aside
       style={{
-        width: "240px",
-        backgroundColor: "var(--bg-card)",
+        width: "220px",
+        backgroundColor: "#fff",
         borderRight: "1px solid var(--border-default)",
         display: "flex",
         flexDirection: "column",
@@ -25,18 +41,32 @@ export default function Sidebar() {
         top: 0,
       }}
     >
-      {/* Logo Area */}
-      <div style={{ padding: "20px 16px", borderBottom: "1px solid var(--border-default)" }}>
-        <Link href="/dashboard" style={{ display: "flex", alignItems: "center", gap: "8px", textDecoration: "none" }}>
-          <span style={{ fontSize: "24px" }}>✂️</span>
-          <span style={{ fontWeight: 600, color: "var(--text-primary)" }}>FLCut</span>
+      <div style={{ padding: "20px 16px 16px", borderBottom: "1px solid var(--border-default)" }}>
+        <Link href="/dashboard" style={{ display: "flex", alignItems: "center", gap: "10px", textDecoration: "none" }}>
+          <div
+            style={{
+              width: "28px",
+              height: "28px",
+              backgroundColor: "var(--accent-coral)",
+              borderRadius: "6px",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <line x1="5" y1="12" x2="19" y2="12" /><polyline points="12 5 19 12 12 19" />
+            </svg>
+          </div>
+          <span style={{ fontWeight: 700, fontSize: "15px", color: "var(--text-primary)", letterSpacing: "-0.02em" }}>
+            FLCut
+          </span>
         </Link>
       </div>
 
-      {/* Navigation */}
-      <nav style={{ flex: 1, padding: "16px", display: "flex", flexDirection: "column", gap: "4px" }}>
+      <nav style={{ flex: 1, padding: "12px 10px", display: "flex", flexDirection: "column", gap: "2px" }}>
         {navItems.map((item) => {
-          const isActive = pathname === item.href || pathname.startsWith(item.href + "/");
+          const isActive = pathname === item.href || (item.href !== "/dashboard" && pathname.startsWith(item.href));
           return (
             <Link
               key={item.href}
@@ -44,32 +74,26 @@ export default function Sidebar() {
               style={{
                 display: "flex",
                 alignItems: "center",
-                gap: "12px",
-                padding: "10px 12px",
+                gap: "10px",
+                padding: "9px 10px",
                 borderRadius: "6px",
                 textDecoration: "none",
-                color: isActive ? "white" : "var(--text-primary)",
-                backgroundColor: isActive ? "var(--accent-coral)" : "transparent",
-                transition: "all 0.2s ease",
-                cursor: "pointer",
-              }}
-              onMouseEnter={(e) => {
-                if (!isActive) (e.currentTarget as HTMLElement).style.backgroundColor = "#F5F5F5";
-              }}
-              onMouseLeave={(e) => {
-                if (!isActive) (e.currentTarget as HTMLElement).style.backgroundColor = "transparent";
+                color: isActive ? "var(--accent-coral)" : "var(--text-secondary)",
+                backgroundColor: isActive ? "rgba(245, 143, 124, 0.08)" : "transparent",
+                fontSize: "14px",
+                fontWeight: isActive ? 600 : 400,
+                transition: "all 0.15s ease",
               }}
             >
-              <span style={{ fontSize: "18px" }}>{item.icon}</span>
-              <span style={{ fontSize: "14px", fontWeight: 500 }}>{item.label}</span>
+              <span style={{ opacity: isActive ? 1 : 0.6 }}>{item.icon}</span>
+              {item.label}
             </Link>
           );
         })}
       </nav>
 
-      {/* Footer Note */}
-      <div style={{ padding: "16px", borderTop: "1px solid var(--border-default)", fontSize: "11px", color: "var(--text-secondary)" }}>
-        v1.0 • URL Management
+      <div style={{ padding: "12px 16px", borderTop: "1px solid var(--border-default)" }}>
+        <p style={{ fontSize: "11px", color: "#bbb", letterSpacing: "0.02em" }}>Finite Loop Club</p>
       </div>
     </aside>
   );

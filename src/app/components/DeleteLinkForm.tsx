@@ -5,12 +5,11 @@ import { deleteLink } from "@/app/actions/link-management";
 
 interface DeleteLinkFormProps {
   linkId: string;
-  compact?: boolean;
 }
 
-export default function DeleteLinkForm({ linkId, compact = false }: DeleteLinkFormProps) {
+export default function DeleteLinkForm({ linkId }: DeleteLinkFormProps) {
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    if (!confirm("Are you sure you want to delete this link? This action cannot be undone.")) {
+    if (!confirm("Delete this link? This cannot be undone.")) {
       e.preventDefault();
     }
   };
@@ -20,24 +19,24 @@ export default function DeleteLinkForm({ linkId, compact = false }: DeleteLinkFo
       <button
         type="submit"
         style={{
-          backgroundColor: "var(--accent-coral)",
-          color: "white",
-          border: "none",
+          backgroundColor: "transparent",
+          border: "1px solid #fecaca",
           borderRadius: "6px",
-          padding: compact ? "8px 12px" : "10px 16px",
-          fontSize: compact ? "13px" : "14px",
+          padding: "6px 12px",
+          fontSize: "13px",
           fontWeight: 500,
+          color: "#C62828",
           cursor: "pointer",
-          transition: "all 0.2s ease",
+          transition: "all 0.15s ease",
         }}
         onMouseEnter={(e) => {
-          (e.currentTarget as HTMLElement).style.backgroundColor = "#E67A66";
+          (e.currentTarget as HTMLElement).style.backgroundColor = "rgba(244,67,54,0.06)";
         }}
         onMouseLeave={(e) => {
-          (e.currentTarget as HTMLElement).style.backgroundColor = "var(--accent-coral)";
+          (e.currentTarget as HTMLElement).style.backgroundColor = "transparent";
         }}
       >
-        🗑️ Delete
+        Delete
       </button>
     </form>
   );
