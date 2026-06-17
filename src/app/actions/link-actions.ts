@@ -4,12 +4,7 @@ import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { generateSlug } from "@/lib/slug";
 import { revalidatePath } from "next/cache";
-
-function parseDate(value: string | null): Date | null {
-  if (!value || value.trim() === "") return null;
-  const d = new Date(value);
-  return isNaN(d.getTime()) ? null : d;
-}
+import { parseISTDateTime } from "@/lib/datetime";
 
 function parseNumber(value: string | null): number | null {
   if (!value || value.trim() === "") return null;
@@ -30,8 +25,10 @@ export async function createLink(formData: FormData) {
   const originalUrl = formData.get("originalUrl") as string;
   const customAlias = (formData.get("customAlias") as string)?.trim();
 
-  const startsAt = parseDate(formData.get("startsAt") as string);
-  const expiresAt = parseDate(formData.get("expiresAt") as string);
+  // Use the new IST utility to parse dates
+  const startsAt = parseISTDateTime(formData.get("startsAt") as string);
+  const expiresAt = parseISTDateTime(formData.get("expiresAt") as string);
+  
   const maxClicks = parseNumber(formData.get("maxClicks") as string);
   const alternateUrlRaw = (formData.get("alternateUrl") as string)?.trim();
   const alternateUrl = alternateUrlRaw || null;
